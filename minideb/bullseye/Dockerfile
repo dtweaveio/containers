@@ -6,6 +6,8 @@ LABEL org.opencontainers.image.base.name="docker.io/bitnami/minideb:bullseye" \
       org.opencontainers.image.title="minideb" \
       org.opencontainers.image.version="bullseye"
 
+ARG TARGETARCH
+
 ENV HOME="/" \
     OS_ARCH="${TARGETARCH:-amd64}" \
     OS_FLAVOUR="debian-11" \

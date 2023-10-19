@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: zookeeper
+  name: zookeeper
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: zookeeper
+  serviceName: zk-svc
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: dtweave/zookeeper:v3.7-1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 2181
+            name: client
+            protocol: TCP
+          - containerPort: 2888
+            name: follower
+            protocol: TCP
+          - containerPort: 3888
+            name: election
+            protocol: TCP
+        env:
+          - name: K8S_REPLICAS
+            value: "3"
+          - name: KB_POD_FQDN
+            value: "zookeeper-0.zk-svc.default.svc"
+          - name: KUBERNETES_NAMESPACE
+            value: "default"
+        volumeMounts:
+          - name: data
+            mountPath: /dtweave/zookeeper/data
+#    volumes:
+#      - name: data
+#        persistentVolumeClaim:
+#          claimName: datals
+#      - name: data-config
+#        persistentVolumeClaim:
+#          claimName: etcd-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            # upstream recommended max is 700M
+            storage: 1Gi
