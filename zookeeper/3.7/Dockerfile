@@ -19,7 +19,8 @@ COPY *.sh /opt/scripts/zookeeper/3.7/
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-#RUN install_packages ca-certificates curl procps
+RUN install_packages netcat-openbsd
+
 RUN mkdir -p /tmp/dtweave/pkg/cache/ && cd /tmp/dtweave/pkg/cache/ && \
     COMPONENTS=( \
       "zookeeper-3.7.1-164-linux-${OS_ARCH}-debian-11" \

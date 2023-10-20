@@ -18,7 +18,6 @@ ENV HOME="/" \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-#RUN install_packages ca-certificates curl procps
 RUN mkdir -p /tmp/dtweave/pkg/cache/ && cd /tmp/dtweave/pkg/cache/ && \
     COMPONENTS=( \
       "java-1.8.362-4-linux-${OS_ARCH}-debian-11" \

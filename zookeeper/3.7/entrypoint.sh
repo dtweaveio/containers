@@ -15,6 +15,9 @@ set -o pipefail
 . /opt/scripts/zookeeper/3.7/env.sh
 
 print_welcome_page
+info ************** env **************
+env
+info ************** env **************
 
 if [[ "$*" = *"/opt/scripts/zookeeper/3.7/run.sh"* || "$*" = *"/run.sh"* ]]; then
     info "** Starting ZooKeeper setup **"
