@@ -17,6 +17,10 @@ set -o pipefail
 
 START_COMMAND=("${ZOO_BASE_DIR}/bin/zkServer.sh" "start-foreground" "$@")
 
+if [[ $DEBUG_MODEL == true ]]; then
+  cat $ZOO_CONF_FILE
+fi
+
 info "** Starting ZooKeeper **"
 if am_i_root; then
     exec_as_user "$ZOO_DAEMON_USER" "${START_COMMAND[@]}"

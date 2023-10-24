@@ -100,7 +100,6 @@ zookeeper_generate_servers(){
         info "Adding server: ${i}"
         zookeeper_conf_set "$ZOO_SERVERS_DIR" "server.${i}" "${endpoints}"
       done
-      zookeeper_conf_set "$ZOO_CONF_FILE" "dynamicConfigFile" "${ZOO_SERVERS_DIR}"
     else
       info "No additional servers were specified. ZooKeeper will run in standalone mode..."
     fi
@@ -130,6 +129,12 @@ zookeeper_generate_conf() {
     zookeeper_conf_set "$ZOO_CONF_FILE" standaloneEnabled "$STANDALONE_ENABLE"
     zookeeper_conf_set "$ZOO_CONF_FILE" reconfigEnabled "$RE_CONFIG_ENABLE"
     zookeeper_conf_set "$ZOO_CONF_FILE" 4lw.commands.whitelist "$ZOO_4LW_COMMANDS_WHITELIST"
+#    zookeeper_conf_set "$ZOO_CONF_FILE" dynamicConfigFile "${ZOO_SERVERS_DIR}"
+
+#    zookeeper_conf_set "$ZOO_CONF_FILE" admin.enableServer "${ENABLE_SERVER}"
+#    zookeeper_conf_set "$ZOO_CONF_FILE" admin.serverAddress "${SERVER_ADDRESS}"
+#    zookeeper_conf_set "$ZOO_CONF_FILE" admin.serverPort "${SERVER_PORT}"
+
     # Set log level
     if [ -f "${ZOO_CONF_DIR}/logback.xml" ]; then
       # Zookeeper 3.8+

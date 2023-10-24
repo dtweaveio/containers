@@ -44,7 +44,7 @@ ENV APP_VERSION="3.7.1" \
     JAVA_HOME="/opt/java" \
     APP_NAME="zookeeper"
 
-EXPOSE 2181 2888 3888 8080
+EXPOSE 2181 2888 3888 9876 7000
 
 ENTRYPOINT [ "/opt/scripts/zookeeper/3.7/entrypoint.sh" ]
 CMD [ "/opt/scripts/zookeeper/3.7/run.sh" ]
