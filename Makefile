@@ -20,3 +20,15 @@ zookeeper:
 .PHONY: import_images
 import_images:
 	@k3d image import dtweave/zookeeper:v3.7-1.0.0 -c develop-cluster
+
+.PHONY: minideb-build
+minideb-build:
+	@docker buildx build --platform linux/amd64,linux/arm64 --tag dtweave/minideb:bullseye -f minideb/bullseye/Dockerfile minideb/bullseye --push
+
+.PHONY: minideb-java8-build
+minideb-java8-build:
+	@docker buildx build --platform linux/amd64,linux/arm64 --tag dtweave/minideb-java8:bullseye -f minideb-java8/bullseye/Dockerfile minideb-java8/bullseye --push
+
+.PHONY: zookeeper-build
+zookeeper-build:
+	@docker buildx build --platform linux/amd64,linux/arm64 --tag dtweave/zookeeper:v3.7-1.0.0 -f zookeeper/3.7/Dockerfile zookeeper/3.7/ --push

@@ -13,7 +13,7 @@ ENV HOME="/" \
     OS_FLAVOUR="debian-11" \
     OS_NAME="linux" \
     PATH="/opt/common/bin:/opt/java/bin:/opt/zookeeper/bin:$PATH" \
-    DOWNLOAD_URL="http://downloads.dtweave.com:9000"
+    DOWNLOAD_URL="https://downloads.bitnami.com"
 
 COPY *.sh /opt/scripts/zookeeper/3.7/
 

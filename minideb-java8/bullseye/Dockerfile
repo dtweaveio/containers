@@ -14,7 +14,7 @@ ENV HOME="/" \
     OS_NAME="linux" \
     JAVA_HOME="/opt/java" \
     PATH="/opt/java/bin:$PATH" \
-    DOWNLOAD_URL="http://downloads.dtweave.com:9000"
+    DOWNLOAD_URL="https://downloads.bitnami.com"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
