@@ -1,0 +1,62 @@
+# Source: hdfs/charts/hdfs-datanode-k8s/templates/datanode-daemonset.yaml
+# Deleting a daemonset may need some trick. See
+# https://github.com/kubernetes/kubernetes/issues/33245#issuecomment-261250489
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: my-hdfs-datanode
+  labels:
+    app: hdfs-datanode
+    release: my-hdfs-datanode
+spec:
+  selector:
+    matchLabels:
+      app: hdfs-datanode
+      release: my-hdfs-datanode
+  template:
+    metadata:
+      labels:
+        app: hdfs-datanode
+        release: my-hdfs-datanode
+    spec:
+      securityContext:
+        fsGroup: 1000
+      hostNetwork: true
+      hostPID: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: datanode
+          image: dtweave/datanode:v3.3.5-1.0
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: hadoop-home
+              mountPath: /opt/dtweave/hadoop-3.3.5
+            - name: hdfs-config
+              mountPath: /dtweave/hadoop/conf
+            - name: hdfs-data-0
+              mountPath: /hadoop/dfs/data0
+              subPath: data0
+            - name: hdfs-data-1
+              mountPath: /hadoop/dfs/data1
+              subPath: data1
+            - name: hdfs-data-2
+              mountPath: /hadoop/dfs/data2
+              subPath: data2
+      restartPolicy: Always
+      volumes:
+        - name: hadoop-home
+          hostPath:
+            path: /opt/dtweave/hadoop-3.3.5
+        - name: hdfs-config
+          configMap:
+            name: my-hdfs-config
+        - name: hdfs-data-0
+          hostPath:
+            path: /my-mnt/sda0/hdfs-data
+        - name: hdfs-data-1
+          hostPath:
+            path: /my-mnt/sda1/hdfs-data
+        - name: hdfs-data-2
+          hostPath:
+            path: /my-mnt/sda2/hdfs-data
