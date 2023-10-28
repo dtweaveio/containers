@@ -15,7 +15,15 @@ minideb-java8:
 
 .PHONY: zookeeper
 zookeeper:
-	@docker build --tag dtweave/zookeeper:v3.7-1.0.0 -f zookeeper/3.7/Dockerfile zookeeper/3.7/
+	@docker build --tag dtweave/zookeeper:v3.7-1.0.0 -f zookeeper/3.7/Dockerfile zookeeper/3.7
+
+.PHONY: hadoop-hdfs
+hadoop-hdfs:
+	@docker build --tag dtweave/hadoop-hdfs:v3.3.6 -f hadoop-hdfs/3.3.6/Dockerfile hadoop-hdfs/3.3.6
+
+.PHONY: journalnode
+journalnode:
+	@docker build --tag dtweave/hdfs-journalnode:v3.3.6-1.0.0 -f hadoop-hdfs/3.3.6/journalnode/Dockerfile hadoop-hdfs/3.3.6/journalnode
 
 .PHONY: import_images
 import_images:
