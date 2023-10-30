@@ -18,7 +18,7 @@ set -o pipefail
 # jnamenode_validate
 # Ensure JournalNode user and group exist when running as 'root'
 if am_i_root; then
-    ensure_user_exists "$HADOOP_DAEMON_USER" --group "$HADOOP_DAEMON_GROUP"
+    ensure_user_exists "$HADOOP_DAEMON_USER" --uid 10000 --group "$HADOOP_DAEMON_GROUP"
     HADOOP_OWNERSHIP_USER="$HADOOP_DAEMON_USER"
 else
     HADOOP_OWNERSHIP_USER=""

@@ -45,7 +45,7 @@ spec:
       containers:
         # TODO: Support hadoop version as option.
         - name: hdfs-namenode
-          image: dtweave/namenode:v3.3.5-1.0
+          image: dtweave/hdfs-namenode:v3.3.6-1.0.0
           env:
             - name: CURRENT_POD
               valueFrom:
@@ -57,31 +57,31 @@ spec:
             - containerPort: 9870
               name: http
           securityContext:
-            runAsUser: 1000
+            runAsUser: 10000
           volumeMounts:
-            - name: metadatadir
-              mountPath: /dtweave/hadoop/dfs/name
-              subPath: name
-            - name: hadoop-home
-              mountPath: /opt/dtweave/hadoop-3.3.5
+            - name: metadata-dir
+              mountPath: /hadoop/dfs/metadata
+              subPath: metadata
+#            - name: hadoop-home
+#              mountPath: /opt/dtweave/hadoop-3.3.5
             - name: hdfs-config
-              mountPath: /dtweave/hadoop/conf
+              mountPath: /hadoop/conf
               readOnly: true
       restartPolicy: Always
       volumes:
         - name: hdfs-config
           configMap:
             name: my-hdfs-config
-        - name: hadoop-home
-          hostPath:
-            path: /opt/dtweave/hadoop-3.3.5
+#        - name: hadoop-home
+#          hostPath:
+#            path: /opt/dtweave/hadoop-3.3.5
   volumeClaimTemplates:
     - metadata:
-        name: metadatadir
+        name: metadata-dir
       spec:
         accessModes:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: "20Gi"
+            storage: "10Gi"
 ---

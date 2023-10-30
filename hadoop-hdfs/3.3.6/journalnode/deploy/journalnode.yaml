@@ -46,40 +46,37 @@ spec:
     spec:
       containers:
         - name: hdfs-journalnode
-          image: dtweave/journalnode:v3.3.5-1.0
+          image: dtweave/hdfs-journalnode:v3.3.6-1.0.0
           ports:
             - containerPort: 8485
               name: jn
             - containerPort: 8480
               name: http
           securityContext:
-            runAsUser: 1000
+            runAsUser: 10000
           volumeMounts:
-            # Mount a subpath of the volume so that the journal subdir would be
-            # a brand new empty dir. This way, we won't get affected by
-            # existing files in the volume top dir.
-            - name: editdir
-              mountPath: /dtweave/hadoop/dfs/journal
+            - name: edits-dir
+              mountPath: /hadoop/dfs/journal
               subPath: journal
-            - name: hadoop-home
-              mountPath: /opt/dtweave/hadoop-3.3.5
+#            - name: hadoop-home
+#              mountPath: /opt/dtweave/hadoop-3.3.5
             - name: hdfs-config
-              mountPath: /dtweave/hadoop/conf
+              mountPath: /hadoop/conf
               readOnly: true
       restartPolicy: Always
       volumes:
         - name: hdfs-config
           configMap:
             name: my-hdfs-config
-        - name: hadoop-home
-          hostPath:
-            path: /opt/dtweave/hadoop-3.3.5
+#        - name: hadoop-home
+#          hostPath:
+#            path: /opt/dtweave/hadoop-3.3.5
   volumeClaimTemplates:
     - metadata:
-        name: editdir
+        name: edits-dir
       spec:
         accessModes:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: "20Gi"
+            storage: "10Gi"
