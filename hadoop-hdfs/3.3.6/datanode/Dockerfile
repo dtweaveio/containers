@@ -28,6 +28,5 @@ ENV APP_VERSION="3.3.6" \
 
 EXPOSE 50010 50020 50075 50475 9866 9864 9867
 
-#USER 1000
 ENTRYPOINT [ "/opt/scripts/hdfs/3.3.6/datanode/entrypoint.sh" ]
 CMD [ "/opt/scripts/hdfs/3.3.6/datanode/run.sh" ]

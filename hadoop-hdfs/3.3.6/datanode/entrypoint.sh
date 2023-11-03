@@ -16,6 +16,12 @@ set -o pipefail
 
 print_welcome_page
 
+if [[ $DEBUG_MODEL == true ]]; then
+  info ************** env-start **************
+  env
+  info ************** env-end **************
+fi
+
 if [[ "$*" = *"/opt/scripts/hdfs/3.3.6/datanode/run.sh"* || "$*" = *"/run.sh"* ]]; then
     info "** Starting NameNode setup **"
     /opt/scripts/hdfs/3.3.6/datanode/post-start.sh

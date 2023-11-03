@@ -19,44 +19,51 @@ spec:
         app: hdfs-datanode
         release: my-hdfs-datanode
     spec:
+      nodeSelector:
+        hdfs-role: datanode
       securityContext:
-        fsGroup: 1000
+        runAsUser: 0
       hostNetwork: true
       hostPID: true
       dnsPolicy: ClusterFirstWithHostNet
+#      initContainers:
+#        - name: fix-permissions
+#          image: busybox
+#          command: [ "sh", "-c", "chown -R 10000:1000 /hadoop/dfs/data0" ]
+#          volumeMounts:
+#            - name: hdfs-data-0
+#              mountPath: /hadoop/dfs/data0
       containers:
         - name: datanode
-          image: dtweave/datanode:v3.3.5-1.0
+          image: dtweave/hdfs-datanode:v3.3.6-1.0.0
           securityContext:
             privileged: true
+            runAsUser: 0
           volumeMounts:
-            - name: hadoop-home
-              mountPath: /opt/dtweave/hadoop-3.3.5
+#            - name: hadoop-home
+#              mountPath: /opt/dtweave/hadoop-3.3.5
             - name: hdfs-config
-              mountPath: /dtweave/hadoop/conf
+              mountPath: /hadoop/conf
             - name: hdfs-data-0
               mountPath: /hadoop/dfs/data0
               subPath: data0
-            - name: hdfs-data-1
-              mountPath: /hadoop/dfs/data1
-              subPath: data1
-            - name: hdfs-data-2
-              mountPath: /hadoop/dfs/data2
-              subPath: data2
+#            - name: hdfs-data-1
+#              mountPath: /hadoop/dfs/data1
+#              subPath: data1
+#            - name: hdfs-data-2
+#              mountPath: /hadoop/dfs/data2
+#              subPath: data2
       restartPolicy: Always
       volumes:
-        - name: hadoop-home
-          hostPath:
-            path: /opt/dtweave/hadoop-3.3.5
         - name: hdfs-config
           configMap:
             name: my-hdfs-config
         - name: hdfs-data-0
           hostPath:
             path: /my-mnt/sda0/hdfs-data
-        - name: hdfs-data-1
-          hostPath:
-            path: /my-mnt/sda1/hdfs-data
-        - name: hdfs-data-2
-          hostPath:
-            path: /my-mnt/sda2/hdfs-data
+#        - name: hdfs-data-1
+#          hostPath:
+#            path: /my-mnt/sda1/hdfs-data
+#        - name: hdfs-data-2
+#          hostPath:
+#            path: /my-mnt/sda2/hdfs-data
