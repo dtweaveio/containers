@@ -1,0 +1,82 @@
+---
+# Source: hdfs/charts/hdfs-journalnode-k8s/templates/journalnode-statefulset.yaml
+# A headless service to create DNS records.
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-hdfs-journalnode
+  labels:
+    app: hdfs-journalnode
+    release: my-hdfs-journalnode
+  annotations:
+    # TODO: Deprecated. Replace tolerate-unready-endpoints with
+    # v1.Service.PublishNotReadyAddresses.
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+    - port: 8485
+      name: jn
+    - port: 8480
+      name: http
+  clusterIP: None
+  selector:
+    app: hdfs-journalnode
+    release: my-hdfs-journalnode
+---
+# Source: hdfs/charts/hdfs-journalnode-k8s/templates/journalnode-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-hdfs-journalnode
+  labels:
+    app: hdfs-journalnode
+    release: my-hdfs-journalnode
+spec:
+  serviceName: my-hdfs-journalnode
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hdfs-journalnode
+      release: my-hdfs-journalnode
+  template:
+    metadata:
+      labels:
+        app: hdfs-journalnode
+        release: my-hdfs-journalnode
+    spec:
+      containers:
+        - name: hdfs-journalnode
+          image: dtweave/hdfs-journalnode:v3.3.4-1.0.0
+          ports:
+            - containerPort: 8485
+              name: jn
+            - containerPort: 8480
+              name: http
+          securityContext:
+            runAsUser: 10000
+          volumeMounts:
+            - name: edits-dir
+              mountPath: /hadoop/dfs/journal
+              subPath: journal
+#            - name: hadoop-home
+#              mountPath: /opt/dtweave/hadoop-3.3.5
+            - name: hdfs-config
+              mountPath: /hadoop/conf
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: hdfs-config
+          configMap:
+            name: my-hdfs-config
+#        - name: hadoop-home
+#          hostPath:
+#            path: /opt/dtweave/hadoop-3.3.5
+  volumeClaimTemplates:
+    - metadata:
+        name: edits-dir
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "10Gi"

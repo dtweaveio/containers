@@ -1,0 +1,84 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-hbase-hmaster
+  labels:
+    app: hbase-hmaster
+    release: my-hbase-hmaster
+  annotations:
+    # TODO: Deprecated. Replace tolerate-unready-endpoints with
+    # v1.Service.PublishNotReadyAddresses.
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+    - port: 16000
+      name: rpc
+    - port: 16010
+      name: web
+  clusterIP: None
+  selector:
+    app: hbase-hmaster
+    release: my-hbase-hmaster
+---
+# Source: hdfs/charts/hdfs-namenode-k8s/templates/namenode-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-hbase-hmaster
+  labels:
+    app: hbase-hmaster
+    release: my-hbase-hmaster
+spec:
+  serviceName: my-hbase-hmaster
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hbase-hmaster
+      release: my-hbase-hmaster
+  template:
+    metadata:
+      labels:
+        app: hbase-hmaster
+        release: my-hbase-hmaster
+    spec:
+      containers:
+        # TODO: Support hadoop version as option.
+        - name: hmaster
+          image: dtweave/hbase-hmaster:v2.5.6-1.0.0
+          ports:
+            - containerPort: 16000
+              name: rpc
+            - containerPort: 16010
+              name: web
+          securityContext:
+            runAsUser: 10000
+          volumeMounts:
+#            - name: metadata-dir
+#              mountPath: /hadoop/dfs/metadata
+#              subPath: metadata
+            - name: hbase-config
+              mountPath: /hbase/conf
+              #readOnly: true
+            - name: hdfs-config
+              mountPath: /hadoop/conf
+      restartPolicy: Always
+      volumes:
+        - name: hbase-config
+          configMap:
+            name: my-hbase-config
+        - name: hdfs-config
+          configMap:
+            name: hdfs-config
+#        - name: hadoop-home
+#          hostPath:
+#            path: /opt/dtweave/hadoop-3.3.5
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: metadata-dir
+#      spec:
+#        accessModes:
+#          - "ReadWriteOnce"
+#        resources:
+#          requests:
+#            storage: "10Gi"
