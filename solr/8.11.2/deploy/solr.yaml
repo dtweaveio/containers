@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-solr
+  labels:
+    app: solr
+    release: my-solr
+  annotations:
+    # TODO: Deprecated. Replace tolerate-unready-endpoints with
+    # v1.Service.PublishNotReadyAddresses.
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+    - port: 8983
+      name: solr
+  clusterIP: None
+  selector:
+    app: solr
+    release: my-solr
+---
+# Source: hdfs/charts/hdfs-namenode-k8s/templates/namenode-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-solr
+  labels:
+    app: solr
+    release: my-solr
+spec:
+  serviceName: my-solr
+  replicas: 3
+  selector:
+    matchLabels:
+      app: solr
+      release: my-solr
+  template:
+    metadata:
+      labels:
+        app: solr
+        release: my-solr
+    spec:
+      containers:
+        # TODO: Support hadoop version as option.
+        - name: solr
+          image: bitnami/solr:8.11.2
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SOLR_ENABLE_CLOUD_MODE
+              value: "yes"
+            - name: SOLR_CLOUD_BOOTSTRAP
+              value: "yes"
+            - name: SOLR_NUMBER_OF_NODES
+              value: "3"
+            - name: SOLR_ZK_HOSTS
+              value: "zk-zookeeper-0.zk-zookeeper-headless.default.svc.cluster.local:2181,zk-zookeeper-0.zk-zookeeper-headless.default.svc.cluster.local:2181,zk-zookeeper-0.zk-zookeeper-headless.default.svc.cluster.local:2181"
+          ports:
+            - containerPort: 8983
+              name: solr
+          securityContext:
+            runAsUser: 10000
+          volumeMounts:
+            - name: data-dir
+              mountPath: /bitnami/solr
+      restartPolicy: Always
+#      volumes:
+#        - name: data-dir
+#          configMap:
+#            name: my-hdfs-config
+#        - name: hadoop-home
+#          hostPath:
+#            path: /opt/dtweave/hadoop-3.3.5
+  volumeClaimTemplates:
+    - metadata:
+        name: data-dir
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "2Gi"
+---
