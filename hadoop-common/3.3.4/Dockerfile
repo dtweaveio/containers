@@ -1,4 +1,4 @@
-FROM docker.io/dtweave/minideb-java8:bullseye
+FROM docker.io/dtweave/hadoop-common:v3.3.4
 
 ARG TARGETARCH
 

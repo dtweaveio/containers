@@ -17,17 +17,43 @@ minideb-java8:
 zookeeper:
 	@docker build --tag dtweave/zookeeper:v3.7-1.0.0 -f zookeeper/3.7/Dockerfile zookeeper/3.7
 
+.PHONY: hadoop-common
+hadoop-common:
+	@docker build --tag dtweave/hadoop-common:v3.3.4 -f hadoop-common/3.3.4/Dockerfile hadoop-common/3.3.4
+
 .PHONY: hadoop-hdfs
 hadoop-hdfs:
 	@docker build --tag dtweave/hadoop-hdfs:v3.3.6 -f hadoop-hdfs/3.3.6/Dockerfile hadoop-hdfs/3.3.6
 
 .PHONY: journalnode
 journalnode:
-	@docker build --tag dtweave/hdfs-journalnode:v3.3.6-1.0.0 -f hadoop-hdfs/3.3.6/journalnode/Dockerfile hadoop-hdfs/3.3.6/journalnode
+	@docker build --tag dtweave/hdfs-journalnode:v3.3.4-1.0.0 -f hadoop-hdfs/3.3.4/journalnode/Dockerfile hadoop-hdfs/3.3.4/journalnode
+
+.PHONY: namenode
+namenode:
+	@docker build --tag dtweave/hdfs-namenode:v3.3.4-1.0.0 -f hadoop-hdfs/3.3.4/namenode/Dockerfile hadoop-hdfs/3.3.4/namenode
+
+.PHONY: datanode
+datanode:
+	@docker build --tag dtweave/hdfs-datanode:v3.3.4-1.0.0 -f hadoop-hdfs/3.3.4/datanode/Dockerfile hadoop-hdfs/3.3.4/datanode
+
+.PHONY: hmaster
+hmaster:
+	@docker build --tag dtweave/hbase-hmaster:v2.5.6-1.0.0 -f hbase/2.5.6/hmaster/Dockerfile hbase/2.5.6/hmaster
+
+.PHONY: hregionserver
+hregionserver:
+	@docker build --tag dtweave/hbase-hregionserver:v2.5.6-1.0.0 -f hbase/2.5.6/hregionserver/Dockerfile hbase/2.5.6/hregionserver
 
 .PHONY: import_images
 import_images:
-	@k3d image import dtweave/zookeeper:v3.7-1.0.0 -c develop-cluster
+	@k3d image import bitnami/solr:8.11.2 -c develop-cluster
+#	@k3d image import dtweave/hbase-hmaster:v2.5.6-1.0.0 -c develop-cluster
+#	@k3d image import dtweave/hbase-hregionserver:v2.5.6-1.0.0 -c develop-cluster
+#	@k3d image import dtweave/hdfs-journalnode:v3.3.4-1.0.0 -c develop-cluster
+#	@k3d image import dtweave/hdfs-namenode:v3.3.4-1.0.0 -c develop-cluster
+#	@k3d image import dtweave/hdfs-datanode:v3.3.4-1.0.0 -c develop-cluster
+#	@k3d image import dtweave/zookeeper:v3.7-1.0.0 -c develop-cluster
 
 .PHONY: minideb-build
 minideb-build:

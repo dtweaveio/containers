@@ -1,0 +1,29 @@
+---
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: pvc-hadoop-common-v3.3.5-1.0
+#spec:
+#  accessModes:
+#    - ReadOnlyMany
+#  storageClassName: local-path
+#  resources:
+#    requests:
+#      storage: 5Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+    - name: my-container
+      image: nginx:alpine
+      volumeMounts:
+        - name: hostpath-volume
+          mountPath: /opt/dtweave/hadoop-3.3.5
+  volumes:
+    - name: hostpath-volume
+      hostPath:
+        path: /opt/dtweave/hadoop-3.3.5

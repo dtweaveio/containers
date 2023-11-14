@@ -27,7 +27,7 @@ RUN /opt/scripts/hbase/2.5.6/hmaster/setup.sh
 ENV APP_VERSION="2.5.6" \
     APP_NAME="hmaster"
 
-EXPOSE 16000 16010 16020 16030
+EXPOSE 16000 16010
 
 CMD ["tail", "-f", "/dev/null"]
 

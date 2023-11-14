@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>dfs.nameservices</name>
+        <value>hdfs-k8s</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///dtweave/hadoop/dfs/name</value>
+    </property>
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/dtweave/hadoop/dfs/journal</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///my-mnt/sda1/hdfs-data</value>
+    </property>
+
+    <property>
+        <name>dfs.ha.namenodes.hdfs-k8s</name>
+        <value>nn0,nn1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.hdfs-k8s.nn0</name>
+        <value>my-hdfs-namenode-0.my-hdfs-namenode.default.svc.cluster.local:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.hdfs-k8s.nn1</name>
+        <value>my-hdfs-namenode-1.my-hdfs-namenode.default.svc.cluster.local:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.hdfs-k8s.nn0</name>
+        <value>my-hdfs-namenode-0.my-hdfs-namenode.default.svc.cluster.local:9870</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.hdfs-k8s.nn1</name>
+        <value>my-hdfs-namenode-1.my-hdfs-namenode.default.svc.cluster.local:9870</value>
+    </property>
+
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>
+            qjournal://my-hdfs-journalnode-1.my-hdfs-journalnode.default.svc.cluster.local:8485;my-hdfs-journalnode-2.my-hdfs-journalnode.default.svc.cluster.local:8485;my-hdfs-journalnode-0.my-hdfs-journalnode.default.svc.cluster.local:8485/hdfs-k8s
+        </value>
+    </property>
+    <property>
+        <name>dfs.client.failover.proxy.provider.hdfs-k8s</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+<!--    // TODO-->
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>shell(/bin/true)</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enable</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>false</value>
+    </property>
+</configuration>

@@ -11,6 +11,9 @@ LABEL org.opencontainers.image.base.name="docker.io/dtweave/minideb:bullseye" \
 ENV HOME="/" \
     OS_ARCH="${TARGETARCH:-amd64}" \
     OS_FLAVOUR="debian-11" \
+    HADOOP_HOME="/opt/hadoop-3.3.6" \
+    PATH=$PATH:$HADOOP_HOME/bin \
+    PATH=$PATH:$HADOOP_HOME/sbin \
     OS_NAME="linux"
 
 COPY hadoop-3.3.6 /opt/hadoop-3.3.6

@@ -1,4 +1,4 @@
-FROM docker.io/dtweave/hadoop-hdfs:v3.3.6
+FROM docker.io/dtweave/hadoop-common:v3.3.4
 
 ARG TARGETARCH
 

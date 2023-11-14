@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hadoop-common-v3.3.5-1.0-init-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: init-container
+          image: dtweave/hadoop-common:v3.3.5-1.0
+          command: ["sh", "-c", "tar -zxvf /opt/dtweave/software/hadoop-3.3.5.tar.gz -C /opt/dtweave/"]
+          volumeMounts:
+            - name: init-data
+              mountPath: /opt/dtweave/hadoop-3.3.5
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 0
+      volumes:
+        - name: init-data
+          hostPath:
+            path: /opt/dtweave/hadoop-3.3.5
+  backoffLimit: 1

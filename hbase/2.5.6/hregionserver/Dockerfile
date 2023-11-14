@@ -27,7 +27,7 @@ RUN /opt/scripts/hbase/2.5.6/regionserver/setup.sh
 ENV APP_VERSION="2.5.6" \
     APP_NAME="regionserver"
 
-EXPOSE 16000 16010 16020 16030
+EXPOSE 16020 16030
 
 CMD ["tail", "-f", "/dev/null"]
 
