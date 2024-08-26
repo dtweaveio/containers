@@ -5,9 +5,13 @@
 copy:
 	@cp -r ./3.5/debian-11/scripts/opt/* /opt/
 
-.PHONY: minideb
-minideb:
+.PHONY: minideb-bullseye
+minideb-bullseye:
 	@docker build --tag dtweave/minideb:bullseye -f minideb/bullseye/Dockerfile minideb/bullseye
+
+.PHONY: minideb-bookworm
+minideb-bookworm:
+	@docker build --tag dtweave/minideb:bookworm -f minideb/bookworm/Dockerfile minideb/bookworm
 
 .PHONY: minideb-java8
 minideb-java8:
