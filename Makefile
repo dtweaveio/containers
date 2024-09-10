@@ -13,9 +13,13 @@ minideb-bullseye:
 minideb-bookworm:
 	@docker build --tag dtweave/minideb:bookworm -f minideb/bookworm/Dockerfile minideb/bookworm
 
-.PHONY: minideb-java8
-minideb-java8:
+.PHONY: minideb-java8-bullseye
+minideb-java8-bullseye:
 	@docker build --tag dtweave/minideb-java8:bullseye -f minideb-java8/bullseye/Dockerfile minideb-java8/bullseye
+
+.PHONY: minideb-java8-bookworm
+minideb-java8-bookworm:
+	@docker build --tag dtweave/minideb-java8:bookworm -f minideb-java8/bookworm/Dockerfile minideb-java8/bookworm
 
 .PHONY: zookeeper
 zookeeper:
@@ -41,6 +45,10 @@ namenode:
 datanode:
 	@docker build --tag dtweave/hdfs-datanode:v3.3.4-1.0.0 -f hadoop-hdfs/3.3.4/datanode/Dockerfile hadoop-hdfs/3.3.4/datanode
 
+.PHONY: hive
+hive:
+	@docker build --tag dtweave/hive-metastore:v3.1.3-1.0.0 -f hive/3.1.3/metastore/Dockerfile hive/3.1.3/metastore/
+
 .PHONY: hmaster
 hmaster:
 	@docker build --tag dtweave/hbase-hmaster:v2.5.6-1.0.0 -f hbase/2.5.6/hmaster/Dockerfile hbase/2.5.6/hmaster
@@ -49,15 +57,25 @@ hmaster:
 hregionserver:
 	@docker build --tag dtweave/hbase-hregionserver:v2.5.6-1.0.0 -f hbase/2.5.6/hregionserver/Dockerfile hbase/2.5.6/hregionserver
 
+.PHONY: hive-spark-common
+hive-spark-common:
+	@docker build --tag dtweave/hive-spark-common:hive3.1.3-spark3.4.1-1.0.0 -f hive-spark-common/hive3.1.3-spark3.4.1/Dockerfile hive-spark-common/hive3.1.3-spark3.4.1
+
 .PHONY: import_images
 import_images:
-	@k3d image import bitnami/solr:8.11.2 -c develop-cluster
+	@k3d image import dtweave/hive-metastore:v3.1.3-1.0.0 -c kb-playground
+#	@k3d image import dtweave/zookeeper:v3.7-1.0.0 -c kb-playground
+#	@k3d image import dtweave/hadoop-common:v3.3.4 -c kb-playground
+#	@k3d image import dtweave/hdfs-namenode:v3.3.4-1.0.0 -c kb-playground
+#	@k3d image import dtweave/hdfs-journalnode:v3.3.4-1.0.0 -c kb-playground
+#	@k3d image import dtweave/hdfs-datanode:v3.3.4-1.0.0 -c kb-playground
+#	@k3d image import bitnami/solr:8.11.2 -c develop-cluster
 #	@k3d image import dtweave/hbase-hmaster:v2.5.6-1.0.0 -c develop-cluster
 #	@k3d image import dtweave/hbase-hregionserver:v2.5.6-1.0.0 -c develop-cluster
 #	@k3d image import dtweave/hdfs-journalnode:v3.3.4-1.0.0 -c develop-cluster
 #	@k3d image import dtweave/hdfs-namenode:v3.3.4-1.0.0 -c develop-cluster
 #	@k3d image import dtweave/hdfs-datanode:v3.3.4-1.0.0 -c develop-cluster
-#	@k3d image import dtweave/zookeeper:v3.7-1.0.0 -c develop-cluster
+
 
 .PHONY: minideb-build
 minideb-build:

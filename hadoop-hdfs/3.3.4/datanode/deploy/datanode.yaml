@@ -19,10 +19,10 @@ spec:
         app: hdfs-datanode
         release: my-hdfs-datanode
     spec:
-      nodeSelector:
-        hdfs-role: datanode
-      securityContext:
-        runAsUser: 0
+#      nodeSelector:
+#        hdfs-role: datanode
+#      securityContext:
+#        runAsUser: 0
       hostNetwork: true
       hostPID: true
       dnsPolicy: ClusterFirstWithHostNet
@@ -33,17 +33,27 @@ spec:
 #          volumeMounts:
 #            - name: hdfs-data-0
 #              mountPath: /hadoop/dfs/data0
+      initContainers:
+        - name: init-hadoop-common
+          image: dtweave/hadoop-common:v3.3.4
+          imagePullPolicy: IfNotPresent
+          command: [ 'sh', '-c', 'cp -r /opt/software/hadoop-3.3.4/* /opt/hadoop-3.3.4' ]
+          volumeMounts:
+            - name: hadoop-common
+              mountPath: /opt/hadoop-3.3.4
       containers:
         - name: datanode
           image: dtweave/hdfs-datanode:v3.3.4-1.0.0
+          imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
-            runAsUser: 0
+            runAsUser: 10000
           volumeMounts:
-#            - name: hadoop-home
-#              mountPath: /opt/dtweave/hadoop-3.3.5
             - name: hdfs-config
               mountPath: /hadoop/conf
+              readOnly: true
+            - name: hadoop-common
+              mountPath: /opt/hadoop-3.3.4
             - name: hdfs-data-0
               mountPath: /hadoop/dfs/data0
               subPath: data0
@@ -58,9 +68,11 @@ spec:
         - name: hdfs-config
           configMap:
             name: my-hdfs-config
+        - name: hadoop-common
+          emptyDir: {}
         - name: hdfs-data-0
           hostPath:
-            path: /my-mnt/sda0/hdfs-data
+            path: /tmp/sda0/
 #        - name: hdfs-data-1
 #          hostPath:
 #            path: /my-mnt/sda1/hdfs-data

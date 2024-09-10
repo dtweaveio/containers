@@ -17,8 +17,8 @@ set -o pipefail
 ensure_user_exists "$HADOOP_DAEMON_USER" --uid 10000 --group "$HADOOP_DAEMON_GROUP"
 
 # Ensure directories used by ZooKeeper exist and have proper ownership and permissions
-for dir in "$HADOOP_DATA_DIR" "$HADOOP_VOLUME_DIR" "$DFS_NAME_NODE_NAME_DIR" "$DFS_JOURNAL_NODE_EDITS_DIR" "$HADOOP_CONF_DIR" "$HADOOP_LOG_DIR"; do
-    ensure_dir_exists "$dir"
+for dir in "$HADOOP_HOME_DIR" "$HADOOP_DATA_DIR" "$HADOOP_VOLUME_DIR" "$DFS_NAME_NODE_NAME_DIR" "$DFS_JOURNAL_NODE_EDITS_DIR" "$HADOOP_CONF_DIR" "$HADOOP_LOG_DIR"; do
+    ensure_dir_exists "$dir" "$HADOOP_DAEMON_USER"
 done
 
 chown -R "$HADOOP_DAEMON_USER":"$HADOOP_DAEMON_GROUP" $HADOOP_HOME_DIR

@@ -42,10 +42,19 @@ spec:
         app: hdfs-namenode
         release: my-hdfs-namenode
     spec:
+      initContainers:
+        - name: init-hadoop-common
+          image: dtweave/hadoop-common:v3.3.4
+          imagePullPolicy: IfNotPresent
+          command: [ 'sh', '-c', 'cp -r /opt/software/hadoop-3.3.4/* /opt/hadoop-3.3.4' ]
+          volumeMounts:
+            - name: hadoop-common
+              mountPath: /opt/hadoop-3.3.4
       containers:
         # TODO: Support hadoop version as option.
         - name: hdfs-namenode
           image: dtweave/hdfs-namenode:v3.3.4-1.0.0
+          imagePullPolicy: IfNotPresent
           env:
             - name: CURRENT_POD
               valueFrom:
@@ -62,19 +71,18 @@ spec:
             - name: metadata-dir
               mountPath: /hadoop/dfs/metadata
               subPath: metadata
-#            - name: hadoop-home
-#              mountPath: /opt/dtweave/hadoop-3.3.5
             - name: hdfs-config
               mountPath: /hadoop/conf
               readOnly: true
+            - name: hadoop-common
+              mountPath: /opt/hadoop-3.3.4
       restartPolicy: Always
       volumes:
         - name: hdfs-config
           configMap:
             name: my-hdfs-config
-#        - name: hadoop-home
-#          hostPath:
-#            path: /opt/dtweave/hadoop-3.3.5
+        - name: hadoop-common
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: metadata-dir

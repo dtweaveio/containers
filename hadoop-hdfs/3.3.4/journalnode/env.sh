@@ -33,3 +33,4 @@ export HADOOP_DAEMON_USER="hadoop"
 export HADOOP_DAEMON_GROUP="hadoop"
 
 export DEBUG_MODEL="${DEBUG_MODEL:-true}"
+export WAIT_ZK_TO_READY="${WAIT_ZK_TO_READY:-true}"

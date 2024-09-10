@@ -1,0 +1,126 @@
+---
+# Source: hdfs/charts/hdfs-journalnode-k8s/templates/journalnode-statefulset.yaml
+# A headless service to create DNS records.
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-hive-metastore
+  labels:
+    app: hive-metastore
+    release: my-hive-metastore
+spec:
+  ports:
+    - port: 9083
+      name: meta
+  clusterIP: None
+  selector:
+    app: hive-metastore
+    release: my-hive-metastore
+---
+# Source: hdfs/charts/hdfs-journalnode-k8s/templates/journalnode-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-hive-metastore
+  labels:
+    app: hive-metastore
+    release: my-hive-metastore
+spec:
+  serviceName: my-hive-metastore
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hive-metastore
+      release: my-hive-metastore
+  template:
+    metadata:
+      labels:
+        app: hive-metastore
+        release: my-hive-metastore
+    spec:
+      securityContext:
+        fsGroupChangePolicy: Always
+        fsGroup: 1000
+      initContainers:
+        - name: init-hadoop-common
+          image: dtweave/hadoop-common:v3.3.4
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+          args:
+            - -ec
+            - |
+              cp -r /opt/software/hadoop-3.3.4/* /opt/hadoop-3.3.4
+              mkdir -p /hive/metadata
+              mkdir -p /hadoop/conf
+              chown -R 10000:1000 /hive/metadata
+              chown -R 10000:1000 /hadoop/conf
+              chown -R 10000:1000 /opt/hadoop-3.3.4
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: hadoop-common
+              mountPath: /opt/hadoop-3.3.4
+            - name: metadata
+              mountPath: /hive/metadata
+              subPath: metadata
+      containers:
+        - name: hive-metastore
+          image: dtweave/hive-metastore:v3.1.3-1.0.0
+          securityContext:
+            runAsUser: 10000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            privileged: false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ "ALL" ]
+            seccompProfile:
+              type: "RuntimeDefault"
+          ports:
+            - containerPort: 9083
+              name: meta
+          env:
+            - name: CURRENT_POD
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DEBUG_MODEL
+              value: "true"
+          volumeMounts:
+            - name: hadoop-common
+              mountPath: /opt/hadoop-3.3.4
+            - name: metadata
+              mountPath: /hive/metadata
+              subPath: metadata
+            - name: hive-metastore-config
+              mountPath: /hive/conf/hive-site.xml
+              subPath: hive-site.xml
+            - name: hadoop-core-config
+              mountPath: /hadoop/conf/core-site.xml
+              subPath: core-site.xml
+            - name: hadoop-hdfs-config
+              mountPath: /hadoop/conf/hdfs-site.xml
+              subPath: hdfs-site.xml 
+      restartPolicy: Always
+      volumes:
+        - name: hadoop-common
+          emptyDir: {}
+        - name: hive-metastore-config
+          configMap:
+            name: hive-metastore-config
+        - name: hadoop-core-config
+          configMap:
+            name: k8shadoop-hadoop-core-config
+        - name: hadoop-hdfs-config
+          configMap:
+            name: k8shadoop-namenode-config
+  volumeClaimTemplates:
+    - metadata:
+        name: metadata
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "1Gi"

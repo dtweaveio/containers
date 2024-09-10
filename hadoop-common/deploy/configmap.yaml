@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: hdfs-config
+  name: my-hdfs-config
   labels:
     app: hdfs-client
     chart: hdfs-config-k8s-0.1.0
@@ -17,7 +17,7 @@ data:
           </property>
           <property>
               <name>ha.zookeeper.quorum</name>
-              <value>zk-zookeeper-0.zk-zookeeper-headless.default.svc.cluster.local:2181,zk-zookeeper-0.zk-zookeeper-headless.default.svc.cluster.local:2181,zk-zookeeper-0.zk-zookeeper-headless.default.svc.cluster.local:2181</value>
+              <value>zookeeper-zookeeper-0.zookeeper-zookeeper-headless.default.svc.cluster.local:2181,zookeeper-zookeeper-1.zookeeper-zookeeper-headless.default.svc.cluster.local:2181,zookeeper-zookeeper-2.zookeeper-zookeeper-headless.default.svc.cluster.local:2181</value>
           </property>   
     </configuration>
   hdfs-site.xml: |

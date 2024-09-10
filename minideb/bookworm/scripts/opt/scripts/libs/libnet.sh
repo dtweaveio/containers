@@ -9,6 +9,7 @@
 
 # Load Generic Libraries
 . /opt/scripts/libs/liblog.sh
+. /opt/scripts/libs/libos.sh
 
 # Functions
 
